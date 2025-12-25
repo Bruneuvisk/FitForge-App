@@ -28,18 +28,18 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
 
   return (
     <div className="w-full max-w-md">
-      <h2 className="text-3xl font-bold text-gray-900 mb-2">Bem-vindo de volta</h2>
-      <p className="text-gray-600 mb-8">Entre para acessar sua conta</p>
+      <h2 className="text-3xl font-bold text-white mb-2">Bem-vindo de volta</h2>
+      <p className="text-gray-400 mb-8">Entre para acessar sua conta</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
             Email
           </label>
           <input
@@ -48,13 +48,13 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-white placeholder-gray-500"
             placeholder="seu@email.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
             Senha
           </label>
           <input
@@ -63,7 +63,7 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-white placeholder-gray-500"
             placeholder="••••••••"
           />
         </div>
@@ -71,17 +71,17 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-900/50"
         >
           {loading ? 'Entrando...' : 'Entrar'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-gray-600">
+      <p className="mt-6 text-center text-gray-400">
         Não tem uma conta?{' '}
         <button
           onClick={onToggleMode}
-          className="text-emerald-600 hover:text-emerald-700 font-semibold"
+          className="text-emerald-400 hover:text-emerald-300 font-semibold"
         >
           Cadastre-se
         </button>
