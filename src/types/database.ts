@@ -12,28 +12,37 @@ export interface Database {
       profiles: {
         Row: {
           id: string
-          role: 'trainer' | 'client'
+          role: 'trainer' | 'client' | 'admin'
           full_name: string
           email: string
           avatar_url: string | null
+          is_banned: boolean
+          banned_at: string | null
+          ban_reason: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
           id: string
-          role: 'trainer' | 'client'
+          role: 'trainer' | 'client' | 'admin'
           full_name: string
           email: string
           avatar_url?: string | null
+          is_banned?: boolean
+          banned_at?: string | null
+          ban_reason?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
-          role?: 'trainer' | 'client'
+          role?: 'trainer' | 'client' | 'admin'
           full_name?: string
           email?: string
           avatar_url?: string | null
+          is_banned?: boolean
+          banned_at?: string | null
+          ban_reason?: string | null
           created_at?: string
           updated_at?: string
         }

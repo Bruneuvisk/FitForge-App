@@ -2,6 +2,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { LandingPage } from './components/LandingPage';
 import { TrainerDashboard } from './components/TrainerDashboard';
 import { ClientDashboard } from './components/ClientDashboard';
+import { AdminDashboard } from './components/AdminDashboard';
 
 function AppContent() {
   const { user, profile, loading } = useAuth();
@@ -19,6 +20,10 @@ function AppContent() {
 
   if (!user || !profile) {
     return <LandingPage />;
+  }
+
+  if (profile.role === 'admin') {
+    return <AdminDashboard />;
   }
 
   if (profile.role === 'trainer') {

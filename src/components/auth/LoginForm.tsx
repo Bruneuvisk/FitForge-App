@@ -3,9 +3,10 @@ import { useAuth } from '../../context/AuthContext';
 
 interface LoginFormProps {
   onToggleMode: () => void;
+  onForgotPassword: () => void;
 }
 
-export function LoginForm({ onToggleMode }: LoginFormProps) {
+export function LoginForm({ onToggleMode, onForgotPassword }: LoginFormProps) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -54,9 +55,18 @@ export function LoginForm({ onToggleMode }: LoginFormProps) {
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-            Senha
-          </label>
+          <div className="flex justify-between items-center mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300">
+              Senha
+            </label>
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
+            >
+              Esqueci minha senha
+            </button>
+          </div>
           <input
             id="password"
             type="password"

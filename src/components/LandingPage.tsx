@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Sparkles, TrendingUp, Dumbbell, UtensilsCrossed } from 'lucide-react';
+import { Sparkles, TrendingUp, Dumbbell, UtensilsCrossed, Check, Star, Zap, Crown } from 'lucide-react';
 import { Logo } from './Logo';
 import { LoginForm } from './auth/LoginForm';
 import { SignupForm } from './auth/SignupForm';
+import { ForgotPasswordForm } from './auth/ForgotPasswordForm';
 
 export function LandingPage() {
   const [showAuth, setShowAuth] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [authMode, setAuthMode] = useState<'login' | 'signup' | 'forgot'>('login');
 
   if (showAuth) {
     return (
@@ -42,10 +43,17 @@ export function LandingPage() {
             </div>
           </div>
           <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl shadow-2xl animate-scaleIn">
-            {authMode === 'login' ? (
-              <LoginForm onToggleMode={() => setAuthMode('signup')} />
-            ) : (
+            {authMode === 'login' && (
+              <LoginForm
+                onToggleMode={() => setAuthMode('signup')}
+                onForgotPassword={() => setAuthMode('forgot')}
+              />
+            )}
+            {authMode === 'signup' && (
               <SignupForm onToggleMode={() => setAuthMode('login')} />
+            )}
+            {authMode === 'forgot' && (
+              <ForgotPasswordForm onBack={() => setAuthMode('login')} />
             )}
           </div>
         </div>
@@ -142,6 +150,202 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+              Planos e Preços
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Escolha o plano ideal para alcançar seus objetivos fitness
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 hover:border-gray-600 transition-all">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gray-600/30 rounded-lg">
+                  <Star className="text-gray-400" size={24} />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Básico</h3>
+              </div>
+              <div className="mb-6">
+                <span className="text-5xl font-bold text-white">R$49</span>
+                <span className="text-gray-400">/mês</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Até 5 clientes</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Treinos gerados por IA</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Dietas básicas</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Acompanhamento de medidas</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-500">
+                  <Check className="text-gray-600 flex-shrink-0" size={20} />
+                  <span className="line-through">Suporte prioritário</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-500">
+                  <Check className="text-gray-600 flex-shrink-0" size={20} />
+                  <span className="line-through">Relatórios avançados</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => {
+                  setAuthMode('signup');
+                  setShowAuth(true);
+                }}
+                className="w-full py-3 border border-gray-600 text-gray-300 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+              >
+                Começar agora
+              </button>
+            </div>
+
+            <div className="bg-gradient-to-b from-emerald-900/30 to-gray-800/50 border-2 border-emerald-500/50 rounded-2xl p-8 relative scale-105 shadow-2xl shadow-emerald-900/30">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-sm font-semibold rounded-full">
+                Mais popular
+              </div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-emerald-600/30 rounded-lg">
+                  <Zap className="text-emerald-400" size={24} />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Profissional</h3>
+              </div>
+              <div className="mb-6">
+                <span className="text-5xl font-bold text-white">R$99</span>
+                <span className="text-gray-400">/mês</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Até 25 clientes</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Treinos avançados por IA</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Dietas personalizadas completas</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Gráficos de evolução detalhados</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-emerald-400 flex-shrink-0" size={20} />
+                  <span>Suporte prioritário</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-500">
+                  <Check className="text-gray-600 flex-shrink-0" size={20} />
+                  <span className="line-through">Marca personalizada</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => {
+                  setAuthMode('signup');
+                  setShowAuth(true);
+                }}
+                className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg font-semibold transition-all shadow-lg"
+              >
+                Escolher plano
+              </button>
+            </div>
+
+            <div className="bg-gradient-to-b from-amber-900/20 to-gray-800/50 border border-amber-500/30 rounded-2xl p-8 hover:border-amber-500/50 transition-all">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-amber-600/30 rounded-lg">
+                  <Crown className="text-amber-400" size={24} />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Premium</h3>
+              </div>
+              <div className="mb-6">
+                <span className="text-5xl font-bold text-white">R$199</span>
+                <span className="text-gray-400">/mês</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-amber-400 flex-shrink-0" size={20} />
+                  <span>Clientes ilimitados</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-amber-400 flex-shrink-0" size={20} />
+                  <span>IA premium com modelos avançados</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-amber-400 flex-shrink-0" size={20} />
+                  <span>Dietas com plano nutricional completo</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-amber-400 flex-shrink-0" size={20} />
+                  <span>Relatórios e analytics avançados</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-amber-400 flex-shrink-0" size={20} />
+                  <span>Suporte 24/7 dedicado</span>
+                </li>
+                <li className="flex items-center gap-3 text-gray-300">
+                  <Check className="text-amber-400 flex-shrink-0" size={20} />
+                  <span>Marca personalizada (white label)</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => {
+                  setAuthMode('signup');
+                  setShowAuth(true);
+                }}
+                className="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-semibold transition-all shadow-lg"
+              >
+                Escolher plano
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-gray-400 mb-4">Todos os planos incluem:</p>
+            <div className="flex flex-wrap justify-center gap-6 text-gray-300">
+              <div className="flex items-center gap-2">
+                <Check className="text-emerald-400" size={16} />
+                <span>7 dias grátis</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="text-emerald-400" size={16} />
+                <span>Cancele quando quiser</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="text-emerald-400" size={16} />
+                <span>Atualizações gratuitas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="text-emerald-400" size={16} />
+                <span>Suporte por email</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+        <div className="max-w-7xl mx-auto text-center">
+          <Logo size="md" />
+          <p className="mt-4 text-gray-500">
+            Transformando vidas através da tecnologia e fitness.
+          </p>
+          <p className="mt-4 text-gray-600 text-sm">
+            2024 ForgeFit. Todos os direitos reservados.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
