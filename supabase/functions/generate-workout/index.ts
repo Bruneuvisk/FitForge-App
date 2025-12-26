@@ -39,7 +39,10 @@ Deno.serve(async (req: Request) => {
       .select()
       .single();
 
-    if (workoutError) throw workoutError;
+    if (workoutError) {
+      console.error('Workout insert error:', workoutError);
+      throw new Error(`Erro ao criar treino: ${workoutError.message}`);
+    }
 
     const exercisesData = workoutPlan.exercises.map((exercise: any) => ({
       workout_id: workout.id,
@@ -56,7 +59,10 @@ Deno.serve(async (req: Request) => {
       .from('exercises')
       .insert(exercisesData);
 
-    if (exercisesError) throw exercisesError;
+    if (exercisesError) {
+      console.error('Exercises insert error:', exercisesError);
+      throw new Error(`Erro ao criar exercícios: ${exercisesError.message}`);
+    }
 
     return new Response(
       JSON.stringify({ success: true, workout }),
@@ -68,8 +74,9 @@ Deno.serve(async (req: Request) => {
       }
     );
   } catch (error) {
+    console.error('Generate workout error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message || 'Erro ao gerar treino' }),
       {
         status: 400,
         headers: {

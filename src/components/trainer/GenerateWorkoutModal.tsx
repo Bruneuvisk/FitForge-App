@@ -58,11 +58,15 @@ export function GenerateWorkoutModal({ client, onClose, onGenerated }: GenerateW
       );
 
       if (!response.ok) {
-        throw new Error('Erro ao gerar treino');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao gerar treino');
       }
 
+      const result = await response.json();
+      console.log('Workout generated:', result);
       onGenerated();
     } catch (err: any) {
+      console.error('Error generating workout:', err);
       setError(err.message || 'Erro ao gerar treino com IA');
     } finally {
       setLoading(false);

@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Sparkles, Edit, Dumbbell, UtensilsCrossed } from 'lucide-react';
 import { Logo } from '../Logo';
+import { supabase } from '../../lib/supabase';
 import { GenerateWorkoutModal } from './GenerateWorkoutModal';
 import { GenerateMealPlanModal } from './GenerateMealPlanModal';
+import { WorkoutEditor } from './WorkoutEditor';
+import { MealPlanEditor } from './MealPlanEditor';
 
 type Client = {
   id: string;
@@ -45,15 +48,50 @@ const activityLabels: Record<string, string> = {
 export function ClientDetails({ client, onBack }: ClientDetailsProps) {
   const [showGenerateWorkout, setShowGenerateWorkout] = useState(false);
   const [showGenerateMealPlan, setShowGenerateMealPlan] = useState(false);
+  const [showEditWorkout, setShowEditWorkout] = useState(false);
+  const [showEditMealPlan, setShowEditMealPlan] = useState(false);
+  const [hasWorkout, setHasWorkout] = useState(false);
+  const [hasMealPlan, setHasMealPlan] = useState(false);
+
+  useEffect(() => {
+    checkExistingPlans();
+  }, [client.id]);
+
+  const checkExistingPlans = async () => {
+    const { data: workout } = await supabase
+      .from('workouts')
+      .select('id')
+      .eq('client_id', client.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    const { data: mealPlan } = await supabase
+      .from('meal_plans')
+      .select('id')
+      .eq('client_id', client.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    setHasWorkout(!!workout);
+    setHasMealPlan(!!mealPlan);
+  };
 
   const handleWorkoutGenerated = () => {
     setShowGenerateWorkout(false);
-    alert('Treino gerado com sucesso! O cliente já pode visualizar no painel dele.');
+    setHasWorkout(true);
   };
 
   const handleMealPlanGenerated = () => {
     setShowGenerateMealPlan(false);
-    alert('Plano alimentar gerado com sucesso! O cliente já pode visualizar no painel dele.');
+    setHasMealPlan(true);
+  };
+
+  const handleWorkoutSaved = () => {
+    setShowEditWorkout(false);
+  };
+
+  const handleMealPlanSaved = () => {
+    setShowEditMealPlan(false);
   };
 
   return (
@@ -141,32 +179,64 @@ export function ClientDetails({ client, onBack }: ClientDetailsProps) {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 animate-slideUp">
-          <div className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl p-8 text-white shadow-2xl hover:scale-105 transition-transform border border-emerald-500/30">
-            <h2 className="text-2xl font-bold mb-3">Gerar Treino com IA</h2>
+          <div className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl p-8 text-white shadow-2xl border border-emerald-500/30">
+            <div className="flex items-center gap-3 mb-3">
+              <Dumbbell size={28} />
+              <h2 className="text-2xl font-bold">Treino</h2>
+            </div>
             <p className="text-emerald-50 mb-6">
-              Crie um plano de treino personalizado baseado nos objetivos e características do cliente
+              {hasWorkout
+                ? 'Cliente ja possui um treino ativo. Voce pode editar ou gerar um novo.'
+                : 'Crie um plano de treino personalizado baseado nos objetivos do cliente'}
             </p>
-            <button
-              onClick={() => setShowGenerateWorkout(true)}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white text-emerald-600 rounded-lg font-semibold hover:bg-emerald-50 transition-all shadow-lg"
-            >
-              <Sparkles size={20} />
-              Gerar Treino
-            </button>
+            <div className="flex gap-3">
+              {hasWorkout && (
+                <button
+                  onClick={() => setShowEditWorkout(true)}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all border border-white/30"
+                >
+                  <Edit size={18} />
+                  Editar
+                </button>
+              )}
+              <button
+                onClick={() => setShowGenerateWorkout(true)}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-emerald-600 rounded-lg font-semibold hover:bg-emerald-50 transition-all shadow-lg"
+              >
+                <Sparkles size={18} />
+                {hasWorkout ? 'Novo Treino' : 'Gerar com IA'}
+              </button>
+            </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-600 to-red-600 rounded-xl p-8 text-white shadow-2xl hover:scale-105 transition-transform border border-orange-500/30">
-            <h2 className="text-2xl font-bold mb-3">Gerar Dieta com IA</h2>
+          <div className="bg-gradient-to-br from-orange-600 to-red-600 rounded-xl p-8 text-white shadow-2xl border border-orange-500/30">
+            <div className="flex items-center gap-3 mb-3">
+              <UtensilsCrossed size={28} />
+              <h2 className="text-2xl font-bold">Dieta</h2>
+            </div>
             <p className="text-orange-50 mb-6">
-              Crie um plano alimentar personalizado com calorias e macronutrientes calculados
+              {hasMealPlan
+                ? 'Cliente ja possui uma dieta ativa. Voce pode editar ou gerar uma nova.'
+                : 'Crie um plano alimentar personalizado com calorias e macronutrientes'}
             </p>
-            <button
-              onClick={() => setShowGenerateMealPlan(true)}
-              className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white text-orange-600 rounded-lg font-semibold hover:bg-orange-50 transition-all shadow-lg"
-            >
-              <Sparkles size={20} />
-              Gerar Dieta
-            </button>
+            <div className="flex gap-3">
+              {hasMealPlan && (
+                <button
+                  onClick={() => setShowEditMealPlan(true)}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white/20 text-white rounded-lg font-semibold hover:bg-white/30 transition-all border border-white/30"
+                >
+                  <Edit size={18} />
+                  Editar
+                </button>
+              )}
+              <button
+                onClick={() => setShowGenerateMealPlan(true)}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-orange-600 rounded-lg font-semibold hover:bg-orange-50 transition-all shadow-lg"
+              >
+                <Sparkles size={18} />
+                {hasMealPlan ? 'Nova Dieta' : 'Gerar com IA'}
+              </button>
+            </div>
           </div>
         </div>
       </main>
@@ -184,6 +254,22 @@ export function ClientDetails({ client, onBack }: ClientDetailsProps) {
           client={client}
           onClose={() => setShowGenerateMealPlan(false)}
           onGenerated={handleMealPlanGenerated}
+        />
+      )}
+
+      {showEditWorkout && (
+        <WorkoutEditor
+          clientId={client.id}
+          onClose={() => setShowEditWorkout(false)}
+          onSaved={handleWorkoutSaved}
+        />
+      )}
+
+      {showEditMealPlan && (
+        <MealPlanEditor
+          clientId={client.id}
+          onClose={() => setShowEditMealPlan(false)}
+          onSaved={handleMealPlanSaved}
         />
       )}
     </div>

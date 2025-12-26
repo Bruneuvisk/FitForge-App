@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { LogOut, TrendingUp, Plus, Target, Dumbbell, UtensilsCrossed, Activity } from 'lucide-react';
+import { LogOut, TrendingUp, Plus, Target, Dumbbell, UtensilsCrossed, Activity, BarChart3 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Logo } from './Logo';
 import { AddMeasurementModal } from './client/AddMeasurementModal';
 import { ProgressCharts } from './client/ProgressCharts';
+import { WorkoutView } from './client/WorkoutView';
+import { MealPlanView } from './client/MealPlanView';
 
 type ClientData = {
   id: string;
@@ -24,12 +26,15 @@ type Measurement = {
   measured_at: string;
 };
 
+type TabType = 'progress' | 'workout' | 'diet';
+
 export function ClientDashboard() {
   const { profile, signOut } = useAuth();
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [showAddMeasurement, setShowAddMeasurement] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabType>('progress');
 
   useEffect(() => {
     loadClientData();
@@ -133,20 +138,6 @@ export function ClientDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Meu Progresso</h1>
-            <p className="text-gray-400">Acompanhe sua evolução fitness</p>
-          </div>
-          <button
-            onClick={() => setShowAddMeasurement(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg transition-all font-semibold shadow-lg shadow-emerald-900/50"
-          >
-            <Plus size={20} />
-            Adicionar Medição
-          </button>
-        </div>
-
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <div className="bg-gradient-to-br from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-xl p-6 hover:scale-105 transition-transform">
             <div className="flex items-center gap-3 mb-4">
@@ -158,12 +149,12 @@ export function ClientDashboard() {
             <p className="text-3xl font-bold text-white">{clientData.current_weight} kg</p>
             {latestMeasurement && latestMeasurement.weight !== clientData.current_weight && (
               <p className="text-xs text-emerald-400 mt-2">
-                Última medição: {latestMeasurement.weight} kg
+                Ultima medicao: {latestMeasurement.weight} kg
               </p>
             )}
           </div>
 
-          <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-xl p-6 hover:scale-105 transition-transform">
+          <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border border-blue-500/30 rounded-xl p-6 hover:scale-105 transition-transform">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-blue-600/30 rounded-lg">
                 <Target className="text-blue-400" size={24} />
@@ -193,20 +184,77 @@ export function ClientDashboard() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-xl p-6 hover:scale-105 transition-transform">
+          <div className="bg-gradient-to-br from-teal-600/20 to-cyan-600/20 border border-teal-500/30 rounded-xl p-6 hover:scale-105 transition-transform">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-purple-600/30 rounded-lg">
-                <Dumbbell className="text-purple-400" size={24} />
+              <div className="p-2 bg-teal-600/30 rounded-lg">
+                <Dumbbell className="text-teal-400" size={24} />
               </div>
             </div>
-            <p className="text-sm text-purple-300 mb-1">Objetivo</p>
+            <p className="text-sm text-teal-300 mb-1">Objetivo</p>
             <p className="text-lg font-bold text-white">
               {goalLabels[clientData.fitness_goal] || clientData.fitness_goal}
             </p>
           </div>
         </div>
 
-        <ProgressCharts measurements={measurements} goalWeight={clientData.goal_weight} />
+        <div className="flex gap-2 mb-6 bg-gray-800/50 p-1 rounded-lg w-fit">
+          <button
+            onClick={() => setActiveTab('progress')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'progress'
+                ? 'bg-emerald-600 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            <BarChart3 size={18} />
+            Progresso
+          </button>
+          <button
+            onClick={() => setActiveTab('workout')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'workout'
+                ? 'bg-emerald-600 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            <Dumbbell size={18} />
+            Meu Treino
+          </button>
+          <button
+            onClick={() => setActiveTab('diet')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              activeTab === 'diet'
+                ? 'bg-emerald-600 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            <UtensilsCrossed size={18} />
+            Minha Dieta
+          </button>
+        </div>
+
+        {activeTab === 'progress' && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-1">Historico de Medicoes</h2>
+                <p className="text-gray-400">Acompanhe sua evolucao</p>
+              </div>
+              <button
+                onClick={() => setShowAddMeasurement(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg transition-all font-semibold shadow-lg shadow-emerald-900/50"
+              >
+                <Plus size={20} />
+                Adicionar Medicao
+              </button>
+            </div>
+            <ProgressCharts measurements={measurements} goalWeight={clientData.goal_weight} />
+          </div>
+        )}
+
+        {activeTab === 'workout' && <WorkoutView clientId={clientData.id} />}
+
+        {activeTab === 'diet' && <MealPlanView clientId={clientData.id} />}
       </main>
 
       {showAddMeasurement && (

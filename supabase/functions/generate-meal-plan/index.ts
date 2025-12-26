@@ -41,7 +41,10 @@ Deno.serve(async (req: Request) => {
       .select()
       .single();
 
-    if (mealPlanError) throw mealPlanError;
+    if (mealPlanError) {
+      console.error('Meal plan insert error:', mealPlanError);
+      throw new Error(`Erro ao criar plano alimentar: ${mealPlanError.message}`);
+    }
 
     const mealsData = mealPlanData.meals.map((meal: any) => ({
       meal_plan_id: mealPlan.id,
@@ -61,7 +64,10 @@ Deno.serve(async (req: Request) => {
       .from('meals')
       .insert(mealsData);
 
-    if (mealsError) throw mealsError;
+    if (mealsError) {
+      console.error('Meals insert error:', mealsError);
+      throw new Error(`Erro ao criar refeições: ${mealsError.message}`);
+    }
 
     return new Response(
       JSON.stringify({ success: true, mealPlan }),
@@ -73,8 +79,9 @@ Deno.serve(async (req: Request) => {
       }
     );
   } catch (error) {
+    console.error('Generate meal plan error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message || 'Erro ao gerar plano alimentar' }),
       {
         status: 400,
         headers: {

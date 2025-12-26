@@ -57,11 +57,15 @@ export function GenerateMealPlanModal({ client, onClose, onGenerated }: Generate
       );
 
       if (!response.ok) {
-        throw new Error('Erro ao gerar plano alimentar');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao gerar plano alimentar');
       }
 
+      const result = await response.json();
+      console.log('Meal plan generated:', result);
       onGenerated();
     } catch (err: any) {
+      console.error('Error generating meal plan:', err);
       setError(err.message || 'Erro ao gerar plano alimentar com IA');
     } finally {
       setLoading(false);

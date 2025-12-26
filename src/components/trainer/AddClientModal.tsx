@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { supabase } from '../../lib/supabase';
 
 interface AddClientModalProps {
   onClose: () => void;
@@ -33,45 +32,40 @@ export function AddClientModal({ onClose, onClientAdded }: AddClientModalProps) 
     setLoading(true);
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/add-client`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            trainerId: profile!.id,
+            email: formData.email,
+            password: formData.password,
+            fullName: formData.fullName,
+            height: parseFloat(formData.height),
+            currentWeight: parseFloat(formData.currentWeight),
+            goalWeight: formData.goalWeight ? parseFloat(formData.goalWeight) : null,
+            fitnessGoal: formData.fitnessGoal,
+            activityLevel: formData.activityLevel,
+            gender: formData.gender,
+            dateOfBirth: formData.dateOfBirth || null,
+            medicalConditions: formData.medicalConditions || null,
+            dietaryRestrictions: formData.dietaryRestrictions || null,
+          }),
+        }
+      );
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('Erro ao criar usuário');
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          email: formData.email,
-          full_name: formData.fullName,
-          role: 'client',
-        });
-
-      if (profileError) throw profileError;
-
-      const { error: clientError } = await supabase
-        .from('clients')
-        .insert({
-          user_id: authData.user.id,
-          trainer_id: profile!.id,
-          height: parseFloat(formData.height),
-          current_weight: parseFloat(formData.currentWeight),
-          goal_weight: formData.goalWeight ? parseFloat(formData.goalWeight) : null,
-          fitness_goal: formData.fitnessGoal,
-          activity_level: formData.activityLevel,
-          gender: formData.gender,
-          date_of_birth: formData.dateOfBirth || null,
-          medical_conditions: formData.medicalConditions || null,
-          dietary_restrictions: formData.dietaryRestrictions || null,
-        });
-
-      if (clientError) throw clientError;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao adicionar cliente');
+      }
 
       onClientAdded();
     } catch (err: any) {
+      console.error('Error adding client:', err);
       setError(err.message || 'Erro ao adicionar cliente');
     } finally {
       setLoading(false);
