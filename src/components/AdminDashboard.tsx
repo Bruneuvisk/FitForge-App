@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { LogOut, Users, UserCog, Shield, TrendingUp, Dumbbell, UtensilsCrossed } from 'lucide-react';
+import { LogOut, Users, UserCog, Shield, TrendingUp, Dumbbell, UtensilsCrossed, Database } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Logo } from './Logo';
 import { TrainersManagement } from './admin/TrainersManagement';
 import { ClientsManagement } from './admin/ClientsManagement';
+import AdminManagement from './admin/AdminManagement';
+import DatabaseManagement from './admin/DatabaseManagement';
 
-type TabType = 'overview' | 'trainers' | 'clients';
+type TabType = 'overview' | 'trainers' | 'clients' | 'admins' | 'database';
 
 type Stats = {
   totalTrainers: number;
@@ -101,10 +103,10 @@ export function AdminDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-2 mb-8 bg-gray-800/50 p-1 rounded-lg w-fit">
+        <div className="flex gap-2 mb-8 bg-gray-800/50 p-1 rounded-lg w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
               activeTab === 'overview'
                 ? 'bg-red-600 text-white'
                 : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
@@ -115,7 +117,7 @@ export function AdminDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('trainers')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
               activeTab === 'trainers'
                 ? 'bg-red-600 text-white'
                 : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
@@ -126,7 +128,7 @@ export function AdminDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('clients')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
               activeTab === 'clients'
                 ? 'bg-red-600 text-white'
                 : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
@@ -134,6 +136,28 @@ export function AdminDashboard() {
           >
             <Users size={18} />
             Clientes
+          </button>
+          <button
+            onClick={() => setActiveTab('admins')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
+              activeTab === 'admins'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            <Shield size={18} />
+            Admins
+          </button>
+          <button
+            onClick={() => setActiveTab('database')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
+              activeTab === 'database'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            <Database size={18} />
+            Banco de Dados
           </button>
         </div>
 
@@ -282,6 +306,10 @@ export function AdminDashboard() {
         {activeTab === 'trainers' && <TrainersManagement onStatsUpdate={loadStats} />}
 
         {activeTab === 'clients' && <ClientsManagement onStatsUpdate={loadStats} />}
+
+        {activeTab === 'admins' && <AdminManagement />}
+
+        {activeTab === 'database' && <DatabaseManagement />}
       </main>
     </div>
   );
